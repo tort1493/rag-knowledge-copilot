@@ -1,26 +1,47 @@
 # Evaluation Report
 
-## Offline evaluation
-- Dataset description:
-- Splits:
-- Metrics:
-- Baseline comparison:
+## Scope
 
-## Slice analysis
-- By segment:
-- Worst-case slices:
+The MVP evaluation uses `eval/questions.json` with 25 offline prompts:
 
-## Calibration & thresholds
-- Calibration method:
-- Decision thresholds:
-- Cost tradeoffs:
+- 20 answerable or partially answerable policy questions drawn from the synthetic handbook
+- 5 intentionally unsupported questions that should trigger refusal
 
-## Failure modes
-- Error taxonomy:
-- Representative examples:
+## Metrics
 
-## LLM red team (if applicable)
-- Injection attempts:
-- Sensitive info:
-- Hallucination checks:
-- Refusal coverage:
+`scripts/eval_rag.py` reports four headline metrics:
+
+1. Answerable accuracy: answerable questions that are not refused and pass basic checks
+2. Refusal correctness: unsupported questions that are explicitly refused
+3. Citation coverage %: fraction of expected sources retrieved for answerable questions
+4. Failure list: question IDs with concrete failure reasons
+
+## Known failure modes
+
+- False refusal when threshold is set too high relative to embedding distance distribution
+- Weak citation coverage when the right document is semantically near the question but not in the top `k`
+- Citation presence without perfect sentence-level attribution because the MVP validates format rather than every claim boundary
+- Model paraphrase drift if retrieval is marginal but still above threshold
+
+## Red-team cases included
+
+- Unsupported organizational questions such as CEO identity
+- Unsupported operational specifics such as production region and SOC 2 report date
+- Questions that could invite hallucination because they sound plausible inside a handbook context
+
+## Guardrail expectations
+
+- User attempts to override system behavior should fail because the system prompt instructs the model to ignore such instructions.
+- Retrieved prompt injection should fail because retrieved text is treated as untrusted and used only as evidence, not instructions.
+- Unsupported content should produce the exact refusal string so downstream logging and eval remain deterministic.
+
+## How to refresh the report
+
+1. Rebuild the index: `python scripts/build_index.py`
+2. Run the eval: `python scripts/eval_rag.py`
+3. Review `artifacts/eval/results.json`
+4. Update this document with current metrics, notable failures, and any threshold adjustments
+
+## Current status
+
+This document ships with the evaluation framework and red-team cases in place. Populate the final metric values after running the eval in the target environment with a valid `OPENAI_API_KEY`.

@@ -1,52 +1,77 @@
-# Project Title — AI Lead System (Template)
+# RAG Knowledge Copilot with Guardrails
 
-> One-liner: what it does + who it’s for.
+This project is a local-first RAG demo that answers questions only from a synthetic knowledge base, cites its sources, and refuses when grounded support is weak or missing.
 
-## Demo
-- Screenshot/GIF:
-- Short video (2–4 min):
+## Features
+
+- Local markdown knowledge base under `data/knowledge_base/`
+- Persistent Chroma index under `artifacts/index/`
+- Streamlit UI with retrieval inspection and rebuild controls
+- Deterministic refusal guardrail and logged refusal reasons
+- Offline mini-evaluation harness with summary metrics
+- Lightweight pytest coverage for chunking, refusal, and citation formatting
 
 ## Quickstart
+
+1. Create and activate a virtual environment.
+2. Install dependencies:
+
 ```bash
-make setup
-make train
-make serve
+pip install -r requirements.txt
 ```
 
-## Architecture
-![architecture](docs/img/architecture.png)
+3. Set your API key:
 
-## Key features
-- Feature 1
-- Feature 2
-- Feature 3
+```bash
+cp .env.example .env
+```
 
-## Evaluation summary
-- Baseline: …
-- Model: …
-- Offline metrics: …
-- Slice analysis: …
-- Failure modes: …
+Add `OPENAI_API_KEY` to `.env` or export it in your shell.
 
-## Safety & governance
-- Data privacy notes:
-- Refusal/abstain behavior (if LLM):
-- Audit logging:
-- Model card: `docs/04_model_card.md`
-- Risk register: `docs/05_risk_register.md`
+4. Build the index:
 
-## Monitoring & ops
-- Monitored signals:
-- Alerts:
-- Rollback criteria:
-- Runbook: `docs/07_runbook.md`
+```bash
+python scripts/build_index.py
+```
 
-## Docs
-- Product brief: `docs/00_product_brief.md`
-- PRD-lite: `docs/01_prd_lite.md`
-- Architecture: `docs/02_architecture.md`
-- Evaluation report: `docs/03_evaluation_report.md`
-- Launch plan: `docs/06_launch_plan.md`
+5. Launch the UI:
 
-## Roadmap
-- Next iteration:
+```bash
+streamlit run app/app.py
+```
+
+6. Run the offline evaluation:
+
+```bash
+python scripts/eval_rag.py
+```
+
+7. Run tests:
+
+```bash
+pytest
+```
+
+## How the guardrails work
+
+- Retrieval must return at least one chunk at or above the configured threshold.
+- If retrieval is weak or empty, the assistant returns:
+
+`I don't have enough information in the provided documents to answer that.`
+
+- Retrieved documents are treated as untrusted data. The generation prompt explicitly rejects any instructions found inside retrieved text.
+- Answerable responses must include inline citations in the format `[source_file.md:chunk_id]`.
+
+## Project layout
+
+- `app/app.py`: Streamlit demo UI
+- `src/project/rag/`: chunking, indexing, retrieval, generation, pipeline
+- `scripts/build_index.py`: builds the persistent index
+- `scripts/eval_rag.py`: runs the offline mini-eval
+- `eval/questions.json`: answerable and unanswerable evaluation set
+- `docs/`: architecture, evaluation report, and runbook artifacts
+
+## Screenshots
+
+- `docs/screenshots/app-main.png` (placeholder)
+- `docs/screenshots/app-retrieval-details.png` (placeholder)
