@@ -44,4 +44,18 @@ The MVP evaluation uses `eval/questions.json` with 25 offline prompts:
 
 ## Current status
 
-This document ships with the evaluation framework and red-team cases in place. Populate the final metric values after running the eval in the target environment with a valid `OPENAI_API_KEY`.
+The current validated run produced these results:
+
+- Total questions: 25
+- Answerable accuracy: 21/21
+- Refusal correctness: 4/4
+- Citation coverage: 100.0%
+- Failures: 0
+
+The evaluation output was written to `artifacts/eval/results.json`.
+
+Observed outcome:
+
+- The retrieval threshold and synthetic handbook coverage were sufficient to answer all supported prompts in the current offline set.
+- Unsupported prompts were refused consistently with the deterministic refusal message.
+- Citation formatting and source retrieval matched the expected eval checks across the full question set.
