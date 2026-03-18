@@ -5,10 +5,14 @@ import re
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
+
+load_dotenv(ROOT / ".env")
 
 from project.rag.generate import REFUSAL_MESSAGE
 from project.rag.pipeline import answer_question

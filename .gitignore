@@ -9,3 +9,7 @@ mlruns/
 dist/
 build/
 .env
+.pytest_cache/
+artifacts/index/
+artifacts/eval/results.json
+artifacts/logs/

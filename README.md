@@ -37,7 +37,7 @@ python scripts/build_index.py
 5. Launch the UI:
 
 ```bash
-streamlit run app/app.py
+python -m streamlit run app/app.py
 ```
 
 6. Run the offline evaluation:
@@ -49,7 +49,7 @@ python scripts/eval_rag.py
 7. Run tests:
 
 ```bash
-pytest
+python -m pytest
 ```
 
 ## How the guardrails work

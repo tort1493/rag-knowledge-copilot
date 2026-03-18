@@ -1,5 +1,8 @@
 chromadb==0.5.5
+fastapi==0.115.12
+numpy==1.26.4
 openai==1.68.2
+pydantic==2.10.6
 pytest==8.3.5
 python-dotenv==1.0.1
 streamlit==1.43.2
